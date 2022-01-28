@@ -39,12 +39,8 @@ namespace Ludole.Inventory
 
         private void MoveTooltipToMouse()
         {
-#if ENABLE_INPUT_SYSTEM
-            _tooltip.GetComponent<RectTransform>().anchoredPosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue()
+            _tooltip.GetComponent<RectTransform>().anchoredPosition = (Vector2) (InputHelper.MousePosition)
                 - new Vector2(0, Screen.height) + Manager.Use<InventoryManager>().TooltipOffset;
-#else
-            _tooltip.GetComponent<RectTransform>().anchoredPosition = Input.mousePosition;
-#endif
         }
 
         private IEnumerator MoveTooltip()

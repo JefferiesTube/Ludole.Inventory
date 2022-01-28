@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Ludole.Core;
+using MarkupAttributes;
 using UnityEngine;
 
 namespace Ludole.Inventory
@@ -27,11 +28,11 @@ namespace Ludole.Inventory
 
     public class Inventory : MonoBehaviour
     {
+        [TabScope("Tab Scope", "General|Constraints|Events", true)]
+        [Tab("./General")]
         public InventorySlotMode SlotMode;
 
         [ShowIf(nameof(SlotMode), InventorySlotMode.Manual)] public List<ItemSlot> ManualSlots;
-
-        [SerializeField] private List<ItemSlot> _contents;
 
         [SerializeField] private int _size;
 
@@ -47,22 +48,22 @@ namespace Ludole.Inventory
             set => _contents[slotIndex] = value;
         }
 
+        [Tab("../Constraints")]
         public List<Category> Constraints;
         public ConstraintMode ConstraintMode;
 
         [SerializeField, HideInInspector] private string[] _usedEvents;
-        [SerializeField, HideInInspector] private string[] _usedNotifications;
 
-        [EventGroup("Event", nameof(_usedEvents))] public ItemOverflowEvent OnItemOverflow;
+        [Tab("../Events"), EventGroup("Event", nameof(_usedEvents))] public ItemOverflowEvent OnItemOverflow;
         [EventGroup("Event", nameof(_usedEvents))] public InventoryChangedEvent OnContentChanged;
-        [EventGroup("Notification", nameof(_usedNotifications))] public InventorySizeChangedEvent OnSizeChanged;
+        [EventGroup("Event", nameof(_usedEvents))] public InventorySizeChangedEvent OnSizeChanged;
 
         [EventGroupButton("Event", nameof(_usedEvents))]
         public int DummyX;
 
-        [EventGroupButton("Notification", nameof(_usedNotifications))]
-        public int DummyY;
 
+        [TitleGroup("Debug"), SerializeField, ReadOnly] private List<ItemSlot> _contents;
+        
         public bool IsEmpty => _contents.All(s => s.Content == null);
         public bool IsFull => _contents.All(s => s.Content != null);
         public int FreeSlots => _contents.Count(s => s.Content == null);

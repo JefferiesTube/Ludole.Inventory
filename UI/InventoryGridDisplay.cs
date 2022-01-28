@@ -1,5 +1,6 @@
 using Ludole.Core;
 using System.Collections.Generic;
+using MarkupAttributes;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,9 +25,9 @@ namespace Ludole.Inventory
             }
         }
 
-        [Title("Overrides")] public bool UseCustomSlotPrefab;
+        [TitleGroup("Overrides")] public bool UseCustomSlotPrefab;
 
-        [/*AssetsOnly,*/ ShowIf(nameof(UseCustomSlotPrefab), true)]
+        [AssetsOnly, ShowIf(nameof(UseCustomSlotPrefab), true)]
         public GameObject CustomSlotPrefab;
 
         protected virtual void Awake()

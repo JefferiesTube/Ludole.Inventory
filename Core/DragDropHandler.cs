@@ -1,4 +1,5 @@
 using Ludole.Core;
+using MarkupAttributes;
 using UnityEngine;
 
 namespace Ludole.Inventory
@@ -8,13 +9,16 @@ namespace Ludole.Inventory
         private GameObject _dragDropRoot;
         private GameObject _draggedIcon;
 
-        [ReadOnly] public ItemSlotDisplay DragSource;
-        [ReadOnly] public bool IsSplitOperation;
+        [TitleGroup("Input")]
 #if ENABLE_INPUT_SYSTEM
         public UnityEngine.InputSystem.InputActionReference _splitAction;
 #else
         public KeyCode[] _splitKeyBindings;
 #endif
+
+        [TitleGroup("Debug")]
+        [ReadOnly] public ItemSlotDisplay DragSource;
+        [ReadOnly] public bool IsSplitOperation;
 
         public override void OnAwake()
         {
@@ -55,11 +59,7 @@ namespace Ludole.Inventory
 
         public void UpdateDragOperation()
         {
-#if ENABLE_INPUT_SYSTEM
-            _draggedIcon.transform.position = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
-#else
-        _draggedIcon.transform.position = Input.mousePosition;
-#endif
+            _draggedIcon.transform.position = InputHelper.MousePosition;
         }
 
         private bool DetectSplitOperation()

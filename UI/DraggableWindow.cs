@@ -1,5 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
+using Ludole.Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -45,13 +45,8 @@ namespace Ludole.Inventory
         private Vector2 CalculateNewPosition()
         {
             Canvas parentCanvas = GetComponentInParent<CanvasScaler>().GetComponent<Canvas>();
-#if ENABLE_INPUT_SYSTEM
-            Vector3 mousePosition = UnityEngine.InputSystem.Mouse.current.position.ReadValue();
-#else
-            Vector3 mousePosition = Input.mousePosition;
-#endif
             RectTransformUtility.ScreenPointToLocalPointInRectangle(parentCanvas.transform as RectTransform,
-                mousePosition, null, out Vector2 pos);
+                InputHelper.MousePosition, null, out Vector2 pos);
             return pos;
         }
 

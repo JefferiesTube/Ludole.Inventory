@@ -1,4 +1,5 @@
 using Ludole.Core;
+using MarkupAttributes;
 using UnityEngine;
 
 namespace Ludole.Inventory
@@ -7,14 +8,16 @@ namespace Ludole.Inventory
 
     public class InventoryManager : ManagerModule
     {
-        [Title("Rarity")] 
+        [TitleGroup("Rarities")] 
         public Rarity DefaultRarity;
         public Rarity[] TrashRarities;
 
-        /*[AssetsOnly]*/ public GameObject GridSlotPrefab;
+        [TitleGroup("Prefabs")]
+        public GameObject GridSlotPrefab;
 
-        [Title("References"), /*SceneObjectsOnly*/] public GameObject Tooltip;
-        public Vector2 TooltipOffset = new Vector2(8,8);
+        [TitleGroup("Tooltip")] 
+        public GameObject Tooltip;
         public TooltipMode TooltipMode;
+        public Vector2 TooltipOffset = new Vector2(8, 8);
     }
 }

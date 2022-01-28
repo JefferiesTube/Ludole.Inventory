@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Ludole.Core;
+using MarkupAttributes;
 using UnityEngine;
 
 namespace Ludole.Inventory
@@ -18,7 +18,7 @@ namespace Ludole.Inventory
         public bool OverrideStackLimit;
         [ShowIf(nameof(OverrideStackLimit), true), Min(0)] public int OverriddenStackLimit;
 
-        public List<Category> SlotConstraints;
         public ConstraintMode ConstraintMode;
+        public List<Category> SlotConstraints;
     }
 }
