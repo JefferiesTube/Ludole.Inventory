@@ -54,12 +54,12 @@ namespace Ludole.Inventory
         {
             while (IsDragging)
             {
-                Vector2 pos = CalculateNewPosition();
-                pos = pos - _startMousePos;
-                pos = _startPos + pos;
-                Target.anchoredPosition = new Vector2(
-                Mathf.Clamp(pos.x, -Target.sizeDelta.x, Viewport.sizeDelta.x),
-                Mathf.Clamp(pos.y, -Viewport.sizeDelta.y, 0));
+                Target.anchoredPosition = _startPos + (CalculateNewPosition() - _startMousePos); ;
+                Vector2 sizeDelta = Viewport.sizeDelta - Target.sizeDelta;
+                Vector2 position = Target.anchoredPosition;
+                position.x = Mathf.Clamp(position.x, -sizeDelta.x * Target.pivot.x, sizeDelta.x * (1 - Target.pivot.x));
+                position.y = Mathf.Clamp(position.y, -sizeDelta.y * Target.pivot.y, sizeDelta.y * (1 - Target.pivot.y));
+                Target.anchoredPosition = position;
                 yield return null;
             }
         }
