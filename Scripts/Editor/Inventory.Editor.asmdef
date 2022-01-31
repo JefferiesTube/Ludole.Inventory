@@ -1,0 +1,21 @@
+{
+    "name": "Ludole.Inventory.Editor",
+    "rootNamespace": "Ludole.Inventory.Editor",
+    "references": [
+        "GUID:446d9aa591479784eba2f92fbf940689",
+        "GUID:d3040e716f8936a4f85e3a5eb009cb77",
+        "GUID:a432eb0a70c5c4a37ab50d59671586f8",
+        "GUID:ca937d03ee5dd4d699091438dc0f3ae6",
+        "GUID:6ad709935d36ecb428b55e673bc2ab83",
+        "GUID:c61f7966d20e38f45989bde55b098f00"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
