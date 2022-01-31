@@ -14,7 +14,7 @@ namespace Ludole.Inventory.Editor
                 return base.RenderStaticPreview(assetPath, subAssets, width, height);
 
             Texture2D sprite = SpriteUtility.GetSpriteTexture(item.Visual, false);
-            Texture2D cache = new Texture2D(width, height, TextureFormat.ARGB32, true);
+            Texture2D cache = new Texture2D(width, height, TextureFormat.RGBA32, true);
             EditorUtility.CopySerialized(sprite, cache);
             return cache;
         }

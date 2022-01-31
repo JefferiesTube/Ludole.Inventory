@@ -13,6 +13,8 @@ namespace Ludole.Inventory
         public void OnPointerEnter(PointerEventData eventData)
         {
             _tooltip = Manager.Use<InventoryManager>().Tooltip;
+            _tooltip.transform.DestroyAllChildren(Manager.Use<InventoryManager>().TooltipIgnoreTags);
+            BuildTooltip();
             _tooltip.SetActive(true);
             switch (Manager.Use<InventoryManager>().TooltipMode)
             {
@@ -30,6 +32,15 @@ namespace Ludole.Inventory
             }
         }
 
+        private void BuildTooltip()
+        {
+            TooltipFactoryGraph graph = Manager.Use<InventoryManager>().TooltipFactory;
+            graph.TooltipRoot = _tooltip;
+            graph.Item = GetComponentInParent<ItemSlotDisplay>().GetItem();
+            TooltipFactoryGraphProcessor processor = new TooltipFactoryGraphProcessor(graph);
+            processor.Run();
+        }
+
         private void MoveTooltipToSlot()
         {
             RectTransform slotParent = GetComponentInParent<ItemSlotDisplay>().GetComponent<RectTransform>();
@@ -39,7 +50,7 @@ namespace Ludole.Inventory
 
         private void MoveTooltipToMouse()
         {
-            _tooltip.GetComponent<RectTransform>().anchoredPosition = (Vector2) (InputHelper.MousePosition)
+            _tooltip.GetComponent<RectTransform>().anchoredPosition = (Vector2)(InputHelper.MousePosition)
                 - new Vector2(0, Screen.height) + Manager.Use<InventoryManager>().TooltipOffset;
         }
 
