@@ -6,7 +6,7 @@ namespace Ludole.Inventory
 {
     public class TooltipFactoryGraphProcessor : BaseGraphProcessor
     {
-        private TooltipFactoryStartNode _startNode;
+        private FlowOutStartNode _startNode;
 
         public TooltipFactoryGraphProcessor(BaseGraph graph) : base(graph)
         {
@@ -14,7 +14,7 @@ namespace Ludole.Inventory
 
         public override void UpdateComputeOrder()
         {
-            _startNode = (TooltipFactoryStartNode) graph.nodes.First(n => n is TooltipFactoryStartNode);
+            _startNode = (FlowOutStartNode) graph.nodes.First(n => n is FlowOutStartNode);
         }
 
         public override void Run()
@@ -35,12 +35,12 @@ namespace Ludole.Inventory
             {
                 BaseNode node = nodeStack.Pop();
 
-                if (node is TooltipFactoryNode tfn)
+                if (node is FlowOutNode tfn)
                 {
                     if (nodeDependenciesGathered.Contains(node))
                     {
                         node.OnProcess();
-                        foreach (TooltipFactoryNode n in tfn.GetExecutedNodes())
+                        foreach (FlowOutNode n in tfn.GetExecutedNodes())
                             nodeStack.Push(n);
 
                         nodeDependenciesGathered.Remove(node);
@@ -71,7 +71,7 @@ namespace Ludole.Inventory
             {
                 BaseNode dependency = dependencies.Pop();
 
-                foreach (BaseNode d in dependency.GetInputNodes().Where(n => n is not TooltipFactoryNode))
+                foreach (BaseNode d in dependency.GetInputNodes().Where(n => n is not FlowOutNode))
                     dependencies.Push(d);
 
                 if (dependency != node)
