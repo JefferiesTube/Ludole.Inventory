@@ -1,0 +1,7 @@
+.Port_TooltipFactoryLink {
+	--port-color: #FFFFFF;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 40px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 40px;
+}

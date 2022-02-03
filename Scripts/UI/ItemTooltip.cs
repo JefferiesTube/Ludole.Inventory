@@ -34,12 +34,11 @@ namespace Ludole.Inventory
 
         private void BuildTooltip()
         {
-            ItemBase item = GetComponentInParent<ItemSlotDisplay>().GetItem();
-
             TooltipGraph graph = Manager.Use<InventoryManager>().TooltipGraph;
-            OnConstruct node = graph.GetNode<OnConstruct>();
-            node.ItemSource = item;
-            graph.Execute(node, new ExecutionFlowData());
+            graph.TooltipRoot = _tooltip;
+            graph.Item = GetComponentInParent<ItemSlotDisplay>().GetItem();
+            TooltipFactoryGraphProcessor processor = new TooltipFactoryGraphProcessor(graph);
+            processor.Run();
         }
 
         private void MoveTooltipToSlot()

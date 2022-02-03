@@ -39,6 +39,7 @@ namespace Ludole.Inventory
         {
             IsDragging = false;
             StopCoroutine(MoveWindow());
+            Debug.Log("MAKE IT STOOOOP");
         }
 
         private Vector2 CalculateNewPosition()
