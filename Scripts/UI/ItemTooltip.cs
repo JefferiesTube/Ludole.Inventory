@@ -37,7 +37,7 @@ namespace Ludole.Inventory
             TooltipGraph graph = Manager.Use<InventoryManager>().TooltipGraph;
             graph.TooltipRoot = _tooltip;
             graph.Item = GetComponentInParent<ItemSlotDisplay>().GetItem();
-            TooltipFactoryGraphProcessor processor = new TooltipFactoryGraphProcessor(graph);
+            LudoleGraphProcessor processor = new LudoleGraphProcessor(graph);
             processor.Run();
         }
 
