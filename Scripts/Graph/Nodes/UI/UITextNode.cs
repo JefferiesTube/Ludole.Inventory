@@ -52,7 +52,7 @@ namespace Ludole.Inventory
             RectTransform parent = (RectTransform)(Group != null && Group.Parent != null
                 ? Group.Parent
                 : ((TooltipGraph)graph).TooltipRoot.transform);
-            GameObject obj = UnityEngine.Object.Instantiate(Manager.Use<InventoryManager>().BasicTextPrefab, parent);
+            GameObject obj = UnityEngine.Object.Instantiate(Manager.Use<TooltipManager>().BasicTextPrefab, parent);
             TextMeshProUGUI text = obj.GetComponent<TextMeshProUGUI>();
             text.text = Text;
             text.fontWeight = FontWeight;

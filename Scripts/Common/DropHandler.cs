@@ -29,8 +29,8 @@ namespace Ludole.Inventory
                 _sourceChanged = false;
                 _targetChanged = false;
 
-                Source = Manager.Use<DragDropHandler>().DragSource;
-                _isSplitOperation = Manager.Use<DragDropHandler>().IsSplitOperation;
+                Source = Manager.Use<DragDropManager>().DragSource;
+                _isSplitOperation = Manager.Use<DragDropManager>().IsSplitOperation;
 
                 if (OperateOnSameSlot())
                     return;
@@ -54,7 +54,7 @@ namespace Ludole.Inventory
                     Source.Inventory.Changed();
                 if (_targetChanged)
                     Target.Inventory.Changed();
-                Manager.Use<DragDropHandler>().RestoreDragOperation();
+                Manager.Use<DragDropManager>().RestoreDragOperation();
             }
         }
 

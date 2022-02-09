@@ -28,12 +28,12 @@ namespace Ludole.Inventory
             {
                 case GroupType.Horizontal:
                     Group.Parent = UnityEngine.Object
-                        .Instantiate(Manager.Use<InventoryManager>().HorizontalGroupPrefab, parent)
+                        .Instantiate(Manager.Use<TooltipManager>().HorizontalGroupPrefab, parent)
                         .GetComponent<RectTransform>();
                     break;
                 case GroupType.Vertical:
                     Group.Parent = UnityEngine.Object
-                        .Instantiate(Manager.Use<InventoryManager>().VerticalGroupPrefab, parent)
+                        .Instantiate(Manager.Use<TooltipManager>().VerticalGroupPrefab, parent)
                         .GetComponent<RectTransform>();
                     break;
                 default:

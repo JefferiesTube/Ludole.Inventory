@@ -12,11 +12,11 @@ namespace Ludole.Inventory
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            _tooltip = Manager.Use<InventoryManager>().Tooltip;
-            _tooltip.transform.DestroyAllChildren(Manager.Use<InventoryManager>().TooltipIgnoreTags);
+            _tooltip = Manager.Use<TooltipManager>().Tooltip;
+            _tooltip.transform.DestroyAllChildren(Manager.Use<TooltipManager>().TooltipIgnoreTags);
             BuildTooltip();
             _tooltip.SetActive(true);
-            switch (Manager.Use<InventoryManager>().TooltipMode)
+            switch (Manager.Use<TooltipManager>().TooltipMode)
             {
                 case TooltipMode.FollowMouse:
                     MoveTooltipToMouse();
@@ -34,7 +34,7 @@ namespace Ludole.Inventory
 
         private void BuildTooltip()
         {
-            TooltipGraph graph = Manager.Use<InventoryManager>().TooltipGraph;
+            TooltipGraph graph = Manager.Use<TooltipManager>().TooltipGraph;
             graph.TooltipRoot = _tooltip;
             graph.Item = GetComponentInParent<IItemSource>().GetItem();
             LudoleGraphProcessor processor = new LudoleGraphProcessor(graph);
@@ -45,13 +45,13 @@ namespace Ludole.Inventory
         {
             RectTransform slotParent = GetComponentInParent<IItemSource>().VisualTransform;
             _tooltip.GetComponent<RectTransform>().position = slotParent.position + new Vector3(slotParent.sizeDelta.x / 2, slotParent.sizeDelta.y / 2, 0)
-                + (Vector3)(Manager.Use<InventoryManager>().TooltipOffset);
+                + (Vector3)(Manager.Use<TooltipManager>().TooltipOffset);
         }
 
         private void MoveTooltipToMouse()
         {
             _tooltip.GetComponent<RectTransform>().anchoredPosition = (Vector2)(InputHelper.MousePosition)
-                - new Vector2(0, Screen.height) + Manager.Use<InventoryManager>().TooltipOffset;
+                - new Vector2(0, Screen.height) + Manager.Use<TooltipManager>().TooltipOffset;
         }
 
         private IEnumerator MoveTooltip()
@@ -65,7 +65,7 @@ namespace Ludole.Inventory
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            Manager.Use<InventoryManager>().Tooltip.SetActive(false);
+            Manager.Use<TooltipManager>().Tooltip.SetActive(false);
             StopCoroutine(MoveTooltip());
         }
     }

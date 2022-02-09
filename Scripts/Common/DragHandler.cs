@@ -19,17 +19,17 @@ namespace Ludole.Inventory
         public void OnBeginDrag(PointerEventData eventData)
         {
             // Place pre-drag checks here
-            Manager.Use<DragDropHandler>().RegisterDragOperation(_itemDisplay);
+            Manager.Use<DragDropManager>().RegisterDragOperation(_itemDisplay);
         }
 
         public void OnDrag(PointerEventData eventData)
         {
-            Manager.Use<DragDropHandler>().UpdateDragOperation();
+            Manager.Use<DragDropManager>().UpdateDragOperation();
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            Manager.Use<DragDropHandler>().RestoreDragOperation();
+            Manager.Use<DragDropManager>().RestoreDragOperation();
         }
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Ludole.Inventory
 {
-    public class DragDropHandler : ManagerModule
+    public class DragDropManager : ManagerModule
     {
         private GameObject _dragDropRoot;
         private GameObject _draggedIcon;

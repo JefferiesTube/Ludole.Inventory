@@ -20,8 +20,7 @@ namespace Ludole.Inventory
 
     public class SlotInventory : InventoryBase
     {
-        [TabScope("Tab Scope", "General|Constraints|Events", true)]
-        [Tab("./General")]
+        [TitleGroup("General")]
         public InventorySlotMode SlotMode;
 
         [ShowIf(nameof(SlotMode), InventorySlotMode.Manual)] public List<ItemSlot> ManualSlots;
@@ -33,12 +32,6 @@ namespace Ludole.Inventory
             get => _size;
             private set => _size = value;
         }
-
-        //public ItemSlot this[int slotIndex]
-        //{
-        //    get => _contents[slotIndex];
-        //    set => _contents[slotIndex] = value;
-        //}
 
         [TitleGroup("Debug"), SerializeField, ReadOnly] private List<ItemSlot> _contents;
 

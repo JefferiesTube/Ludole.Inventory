@@ -14,14 +14,14 @@ namespace Ludole.Inventory
 
     public abstract class InventoryBase : MonoBehaviour
     {
-        [Tab("../Constraints")]
+        [TitleGroup("Constraints")]
         public List<Category> Constraints;
 
         public ConstraintMode ConstraintMode;
 
         [SerializeField, HideInInspector] private string[] _usedEvents;
 
-        [Tab("../Events"), EventGroup("Event", nameof(_usedEvents))] public ItemOverflowEvent OnItemOverflow;
+        [TitleGroup("Events"), EventGroup("Event", nameof(_usedEvents))] public ItemOverflowEvent OnItemOverflow;
         [EventGroup("Event", nameof(_usedEvents))] public InventoryChangedEvent OnContentChanged;
         [EventGroup("Event", nameof(_usedEvents))] public InventorySizeChangedEvent OnSizeChanged;
 

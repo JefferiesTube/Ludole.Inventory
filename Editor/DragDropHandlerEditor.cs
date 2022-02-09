@@ -3,7 +3,7 @@ using UnityEditor;
 
 namespace Ludole.Inventory.Editor
 {
-    [CustomEditor(typeof(DragDropHandler), true), CanEditMultipleObjects]
+    [CustomEditor(typeof(DragDropManager), true), CanEditMultipleObjects]
     public class DragDropHandlerEditor : MarkedUpEditor
     {
     }
