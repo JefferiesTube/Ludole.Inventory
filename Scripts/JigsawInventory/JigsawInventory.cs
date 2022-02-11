@@ -19,6 +19,10 @@ namespace Ludole.Inventory
                 }
             }
         }
+
+        public static Vector2Int IndexToPosition(int index, JigsawInventory inventory) => new Vector2Int(index % inventory.Width, index / inventory.Width);
+        public static int PositionToIndex(Vector2Int position, JigsawInventory inventory) => PositionToIndex(position.x, position.y, inventory);
+        public static int PositionToIndex(int x, int y, JigsawInventory inventory) => x + y * inventory.Width;
     }
 
     [Serializable]
@@ -40,6 +44,8 @@ namespace Ludole.Inventory
 
         public override bool IsEmpty { get; }
         public override bool IsFull { get; }
+
+        public override bool AllowSwapping => false;
 
         public IEnumerable<JigsawContent> GetItems()
         {
@@ -63,14 +69,7 @@ namespace Ludole.Inventory
 
         public override void Place(int index, ItemBase item)
         {
-            JigsawContent entry = new JigsawContent
-            {
-                X = index % Width,
-                Y = index / Width,
-                Content = item
-            };
-            _contents.Add(entry);
-            Changed();
+            Place(JigsawUtility.IndexToPosition(index, this), item);
         }
 
         public override void Clear(int index)
@@ -90,7 +89,7 @@ namespace Ludole.Inventory
 
         public bool FindItem(int index, out ItemBase item)
         {
-            Vector2Int pos = new Vector2Int(index % Width, index / Width);
+            Vector2Int pos = JigsawUtility.IndexToPosition(index, this);
             item = _contents
                 .Select(c => new { Item = c.Content, Slots = JigsawUtility.OccupiedSlots(c.X, c.Y, c.Content.Width, c.Content.Height) })
                 .FirstOrDefault(c => c.Slots.Contains(pos))
@@ -108,9 +107,15 @@ namespace Ludole.Inventory
 
         public bool CanPlace(ItemBase item, int x, int y)
         {
-            return !JigsawUtility.OccupiedSlots(x, y, item.Width, item.Height)
+            return !GetAffectedSlotIndizes(JigsawUtility.PositionToIndex(x,y, this), item.Width, item.Height)
+                .Select(s => JigsawUtility.IndexToPosition(s, this))
                 .Intersect(_contents.Where(c => c.Content != item).SelectMany(c => JigsawUtility.OccupiedSlots(c.X, c.Y, c.Content.Width, c.Content.Height)))
                 .Any();
+        }
+
+        public Vector2Int GetAdjustedPosition(int desiredIndex, ItemBase item)
+        {
+            return JigsawUtility.IndexToPosition(GetAffectedSlotIndizes(desiredIndex, item.Width, item.Height).Min(), this);
         }
 
         public bool Put(ItemBase item)
@@ -121,11 +126,12 @@ namespace Ludole.Inventory
                 {
                     if (CanPlace(item, x, y))
                     {
+                        Vector2Int actualPosition = GetAdjustedPosition(JigsawUtility.PositionToIndex(x, y, this), item);
                         JigsawContent c = new JigsawContent
                         {
                             Content = item,
-                            X = x,
-                            Y = y
+                            X = actualPosition.x,
+                            Y = actualPosition.y
                         };
 
                         _contents.Add(c);
@@ -138,10 +144,9 @@ namespace Ludole.Inventory
             return false;
         }
 
-        public bool Place(ItemBase item, Vector2Int position)
+        public bool Place(Vector2Int position, ItemBase item)
         {
-            if (!CanPlace(item, position.x, position.y))
-                return false;
+            position = GetAdjustedPosition(JigsawUtility.PositionToIndex(position, this), item);
 
             JigsawContent c = new JigsawContent
             {
@@ -154,6 +159,35 @@ namespace Ludole.Inventory
             Changed();
 
             return true;
+        }
+
+        public int[] GetAffectedSlotIndizes(int desiredStartIndex, int itemWidth, int itemHeight)
+        {
+            Vector2Int indexedPosition = new Vector2Int(desiredStartIndex % Width, desiredStartIndex / Width);
+            int availableWidth = Width - indexedPosition.x;
+            if (availableWidth < itemWidth)
+            {
+                indexedPosition.x -= (itemWidth - availableWidth);
+            }
+
+            int availableHeight = Height - indexedPosition.y;
+            if (availableHeight < itemHeight)
+            {
+                indexedPosition.y -= (itemHeight - availableHeight);
+            }
+
+            List<int> indizes = new List<int>();
+
+            for (int x = 0; x < itemWidth; x++)
+            {
+                for (int y = 0; y < itemHeight; y++)
+                {
+                    Vector2Int position = indexedPosition + new Vector2Int(x,y);
+                    indizes.Add(position.x + position.y * Width);
+                }
+            }
+
+            return indizes.ToArray();
         }
     }
 }

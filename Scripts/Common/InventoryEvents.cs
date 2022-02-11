@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine.Events;
 
 namespace Ludole.Inventory
@@ -20,6 +21,11 @@ namespace Ludole.Inventory
 
     [Serializable]
     public class InventorySizeChangedEvent : UnityEvent<InventoryBase>
+    {
+    }
+
+    [Serializable]
+    public class InventorySelectionEvent : UnityEvent<IList<int>>
     {
     }
 }

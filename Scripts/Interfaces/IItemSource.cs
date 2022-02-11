@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Ludole.Inventory
 {
@@ -17,5 +18,9 @@ namespace Ludole.Inventory
         ItemBase GetItem();
         bool PassesInventorySpecificCheck(ItemBase item, int index);
         RectTransform VisualTransform { get; }
+        UnityEvent OnSelect { get; }
+        UnityEvent OnDeselect { get; }
+        GameObject GameObject { get; }
     }
 }
+

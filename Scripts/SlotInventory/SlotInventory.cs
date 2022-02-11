@@ -33,6 +33,8 @@ namespace Ludole.Inventory
             private set => _size = value;
         }
 
+        public override bool AllowSwapping => true;
+
         [TitleGroup("Debug"), SerializeField, ReadOnly] private List<ItemSlot> _contents;
 
         public override bool IsEmpty => _contents.All(s => s.Content == null);

@@ -16,9 +16,14 @@ namespace Ludole.Inventory
         public KeyCode[] _splitKeyBindings;
 #endif
 
+        [TitleGroup("Settings")] 
+        public float DragPreviewIconSize = 200;
+
         [TitleGroup("Debug")]
-        [ReadOnly] public IItemSource DragSource;
         [ReadOnly] public bool IsSplitOperation;
+        [ReadOnly] public bool InDragOperation;
+        [ReadOnly] public IItemSource DragSource;
+
 
         public override void OnAwake()
         {
@@ -29,8 +34,22 @@ namespace Ludole.Inventory
         private void CreateDragIconCopy(IItemSource display)
         {
             _draggedIcon = Instantiate(display.VisualSource, _dragDropRoot.GetComponent<RectTransform>());
-            _draggedIcon.GetComponent<RectTransform>().SetAnchor(AnchorPresets.TopLeft).sizeDelta =
-                display.VisualSource.GetComponent<RectTransform>().rect.size;
+            RectTransform rt = _draggedIcon.GetComponent<RectTransform>().SetAnchor(AnchorPresets.TopLeft);
+            Vector2 originalSize = display.VisualSource.GetComponent<RectTransform>().rect.size;
+
+            float aspectRatio = originalSize.x / originalSize.y;
+
+            if (originalSize.x > originalSize.y)
+            {
+                originalSize.y = DragPreviewIconSize;
+                originalSize.x = DragPreviewIconSize * aspectRatio;
+            }
+            else
+            {
+                originalSize.x = DragPreviewIconSize;
+                originalSize.y = DragPreviewIconSize * (1 / aspectRatio);
+            }
+            rt.sizeDelta = originalSize;
             Destroy(_draggedIcon.GetComponent<DragHandler>());
             display.Disable();
         }
@@ -54,6 +73,8 @@ namespace Ludole.Inventory
             CreateDragDropRoot();
             CreateDragIconCopy(display);
             IsSplitOperation = DetectSplitOperation();
+            Manager.Use<WindowManager>().Continuously = true;
+            InDragOperation = true;
             // TODO: Events
         }
 
@@ -78,6 +99,8 @@ namespace Ludole.Inventory
             Destroy(_draggedIcon);
             Destroy(_dragDropRoot);
             DragSource.Enable();
+            Manager.Use<WindowManager>().Continuously = false;
+            InDragOperation = false;
             // TODO: Events
         }
     }

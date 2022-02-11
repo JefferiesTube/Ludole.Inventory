@@ -1,5 +1,6 @@
 using MarkupAttributes;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Ludole.Inventory
@@ -8,6 +9,14 @@ namespace Ludole.Inventory
     {
         public Image Background;
         public Image Image;
+        public Image Selection;
+
+        [SerializeField] private UnityEvent _onSelect;
+        public UnityEvent OnSelect => _onSelect;
+        
+        [SerializeField] private UnityEvent _onDeselect;
+        public UnityEvent OnDeselect => _onDeselect;
+        public GameObject GameObject => gameObject;
 
         [ReadOnly] public JigsawInventory JigsawInventory;
         [ReadOnly] public Vector2Int Position;
@@ -18,12 +27,18 @@ namespace Ludole.Inventory
 
         public void Enable()
         {
-            
+            if (Image != null)
+                Image.enabled = true;
+            if (Background != null)
+                Background.enabled = true;
         }
 
         public void Disable()
         {
-            
+            if(Image != null)
+                Image.enabled = false;
+            if (Background != null)
+                Background.enabled = false;
         }
 
         public void ToggleRaycastTarget(bool newState)

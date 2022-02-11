@@ -148,7 +148,8 @@ namespace Ludole.Inventory
                                                   && Target.PassesInventorySpecificCheck(Source.GetItem(), Target.Index);
 
         private bool SwapSuitable() =>
-            PassesConstraintCheck(Source.GetItem(), Target.Inventory)
+            Source.Inventory.AllowSwapping && Target.Inventory.AllowSwapping
+            && PassesConstraintCheck(Source.GetItem(), Target.Inventory)
             && PassesConstraintCheck(Target.GetItem(), Source.Inventory)
             && Target.PassesInventorySpecificCheck(Source.GetItem(), Target.Index)
             && Source.PassesInventorySpecificCheck(Target.GetItem(), Source.Index);

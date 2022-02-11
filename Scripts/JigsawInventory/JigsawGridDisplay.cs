@@ -1,5 +1,4 @@
 using Ludole.Core;
-using MarkupAttributes;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,68 +6,17 @@ using UnityEngine.UI;
 namespace Ludole.Inventory
 {
     [RequireComponent(typeof(GridLayoutGroup))]
-    public class JigsawGridDisplay : MonoBehaviour
+    public class JigsawGridDisplay : InventoryDisplayBase<JigsawInventory, JigsawSlotDisplay>
     {
-        [SerializeField] private JigsawInventory _jigsawInventory;
-
-        private List<JigsawSlotDisplay> _spawnedObjects;
         private List<GameObject> _spawnedVisuals;
-
-        [TitleGroup("Overrides")] public bool UseCustomSlotPrefab;
-
-        [AssetsOnly, ShowIf(nameof(UseCustomSlotPrefab), true)]
-        public GameObject CustomSlotPrefab;
 
         private GridLayoutGroup _grid;
 
-        public JigsawInventory JigsawInventory
+        protected override void Awake()
         {
-            get => _jigsawInventory;
-            set
-            {
-                UnbindEvents();
-                _jigsawInventory = value;
-                BindEvents();
-                Rebuild(_jigsawInventory);
-            }
-        }
-
-        protected virtual void Awake()
-        {
+            base.Awake();
             _grid = GetComponent<GridLayoutGroup>();
-            _spawnedObjects = new List<JigsawSlotDisplay>();
             _spawnedVisuals = new List<GameObject>();
-        }
-
-        protected virtual void Start()
-        {
-            if (_jigsawInventory != null)
-            {
-                BindEvents();
-                Rebuild(_jigsawInventory);
-            }
-        }
-
-        private void BindEvents()
-        {
-            if (_jigsawInventory != null)
-                _jigsawInventory.OnContentChanged.AddListener(Rebuild);
-        }
-
-        private void UnbindEvents()
-        {
-            if (_jigsawInventory != null)
-                _jigsawInventory.OnContentChanged.RemoveListener(Rebuild);
-        }
-
-        public void Clear()
-        {
-            for (int i = _spawnedObjects.Count - 1; i >= 0; i--)
-            {
-                if (_spawnedObjects[i] != null)
-                    Destroy(_spawnedObjects[i]);
-                _spawnedObjects.RemoveAt(i);
-            }
         }
 
         public void ClearVisuals()
@@ -81,21 +29,21 @@ namespace Ludole.Inventory
             }
         }
 
-        private void Rebuild(InventoryBase _)
+        public override void Rebuild(InventoryBase _)
         {
-            if (_jigsawInventory == null)
+            if (_inventory == null)
             {
                 Clear();
                 return;
             }
 
-            bool doSpawn = _spawnedObjects.Count != _jigsawInventory.Width * _jigsawInventory.Height;
+            bool doSpawn = _spawnedObjects.Count != _inventory.Width * _inventory.Height;
             if (doSpawn)
                 Clear();
 
-            for (int i = 0; i < _jigsawInventory.Width * _jigsawInventory.Height; i++)
+            for (int i = 0; i < _inventory.Width * _inventory.Height; i++)
             {
-                Vector2Int position = new Vector2Int(i % _jigsawInventory.Width, i / _jigsawInventory.Width);
+                Vector2Int position = new Vector2Int(i % _inventory.Width, i / _inventory.Width);
                 if (doSpawn)
                 {
                     GameObject slotPrefab = UseCustomSlotPrefab
@@ -108,11 +56,11 @@ namespace Ludole.Inventory
                     //    throw new MissingComponentException(
                     //        $"[Inventory] SlotPrefabs require a \'{nameof(ItemSlotDisplay)}\' component");
 
-                    _spawnedObjects.Add(refs);
+                    _spawnedObjects.Add(i, refs);
                 }
 
                 JigsawSlotDisplay itemSlotDisplay = _spawnedObjects[i];
-                itemSlotDisplay.JigsawInventory = _jigsawInventory;
+                itemSlotDisplay.JigsawInventory = _inventory;
                 itemSlotDisplay.Position = position;
                 itemSlotDisplay.Refresh();
             }
@@ -120,30 +68,35 @@ namespace Ludole.Inventory
             ClearVisuals();
             SpawnVisuals();
 
-            _grid.constraintCount = _jigsawInventory.Width;
+            _grid.constraintCount = _inventory.Width;
         }
 
         private void SpawnVisuals()
         {
-            foreach (JigsawContent item in _jigsawInventory.GetItems())
+            foreach (JigsawContent item in _inventory.GetItems())
             {
                 GameObject visual = Instantiate(Manager.Use<InventoryManager>().JigsawVisualPrefab);
                 RectTransform rt = visual.GetComponent<RectTransform>();
                 JigsawSlotDisplay jsd = visual.GetComponent<JigsawSlotDisplay>();
-                jsd.JigsawInventory = _jigsawInventory;
+                jsd.JigsawInventory = _inventory;
                 jsd.Position = new Vector2Int(item.X, item.Y);
                 rt.SetParent(_grid.transform);
 
                 rt.anchoredPosition = new Vector2(
                        item.X * _grid.cellSize.x + Mathf.Min(0, item.X - 1) * _grid.spacing.x,
-                    - (item.Y * _grid.cellSize.y + Mathf.Min(0, item.Y - 1) * _grid.spacing.y));
+                    -(item.Y * _grid.cellSize.y + Mathf.Min(0, item.Y - 1) * _grid.spacing.y));
 
                 rt.sizeDelta = new Vector2(
-                    item.Content.Width  * _grid.cellSize.x + Mathf.Min(0, item.Content.Width - 1) * _grid.spacing.x,
+                    item.Content.Width * _grid.cellSize.x + Mathf.Min(0, item.Content.Width - 1) * _grid.spacing.x,
                     item.Content.Height * _grid.cellSize.y + Mathf.Min(0, item.Content.Height - 1) * _grid.spacing.y);
                 jsd.Image.sprite = item.Content.Visual;
                 _spawnedVisuals.Add(visual);
             }
+        }
+
+        public int[] GetAffectedSlots(int selectionIndex, ItemBase item)
+        {
+            return _inventory.GetAffectedSlotIndizes(selectionIndex, item.Width, item.Height);
         }
     }
 }

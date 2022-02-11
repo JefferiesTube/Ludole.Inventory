@@ -1,6 +1,7 @@
 using MarkupAttributes;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Ludole.Inventory
@@ -12,6 +13,14 @@ namespace Ludole.Inventory
         public Image RarityFrame;
         public Image Icon;
         public TextMeshProUGUI StackSize;
+        public Image Selection;
+
+        [SerializeField] private UnityEvent _onSelect;
+        public UnityEvent OnSelect => _onSelect;
+
+        [SerializeField] private UnityEvent _onDeselect;
+        public UnityEvent OnDeselect => _onDeselect;
+        public GameObject GameObject => gameObject;
 
         [ReadOnly] public SlotInventory SlotInventory;
         [ReadOnly] public int SlotIndex;
