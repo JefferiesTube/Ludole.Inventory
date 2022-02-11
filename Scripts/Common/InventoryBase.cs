@@ -50,7 +50,7 @@ namespace Ludole.Inventory
         public void Changed()
         {
             if (_raiseChangeEvent)
-                OnContentChanged.Invoke(this);
+                OnContentChanged.Invoke();
         }
 
         public abstract void Place(int index, ItemBase item);

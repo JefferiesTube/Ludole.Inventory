@@ -7,7 +7,7 @@ namespace Ludole.Inventory
     [RequireComponent(typeof(GridLayoutGroup))]
     public class InventoryGridDisplay : InventoryDisplayBase<SlotInventory, ItemSlotDisplay>
     {
-        public override void Rebuild(InventoryBase _)
+        public override void Rebuild()
         {
             if (_inventory == null)
             {

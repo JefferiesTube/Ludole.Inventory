@@ -29,7 +29,7 @@ namespace Ludole.Inventory
             }
         }
 
-        public override void Rebuild(InventoryBase _)
+        public override void Rebuild()
         {
             if (_inventory == null)
             {

@@ -30,7 +30,7 @@ namespace Ludole.Inventory
             _selection = new List<int>();
         }
 
-        public TInventory SlotInventory
+        public TInventory Inventory
         {
             get => _inventory;
             set
@@ -38,7 +38,7 @@ namespace Ludole.Inventory
                 UnbindEvents();
                 _inventory = value;
                 BindEvents();
-                Rebuild(_inventory);
+                Rebuild();
             }
         }
 
@@ -57,14 +57,14 @@ namespace Ludole.Inventory
                 _inventory.OnContentChanged.RemoveListener(Rebuild);
         }
 
-        public abstract void Rebuild(InventoryBase inventory);
+        public abstract void Rebuild();
 
         protected virtual void Start()
         {
             if (_inventory != null)
             {
                 BindEvents();
-                Rebuild(_inventory);
+                Rebuild();
             }
         }
 

@@ -15,7 +15,7 @@ namespace Ludole.Inventory
     }
 
     [Serializable]
-    public class InventoryChangedEvent : UnityEvent<InventoryBase>
+    public class InventoryChangedEvent : UnityEvent
     {
     }
 
