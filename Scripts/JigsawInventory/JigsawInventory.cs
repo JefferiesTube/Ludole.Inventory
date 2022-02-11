@@ -31,7 +31,6 @@ namespace Ludole.Inventory
         public int X;
         public int Y;
         [ReadOnly] public ItemBase Content;
-        public bool Rotated;
     }
 
     public class JigsawInventory : InventoryBase

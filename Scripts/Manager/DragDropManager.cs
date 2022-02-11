@@ -1,6 +1,7 @@
 using Ludole.Core;
 using MarkupAttributes;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Ludole.Inventory
 {
@@ -10,30 +11,42 @@ namespace Ludole.Inventory
         private GameObject _draggedIcon;
 
         [TitleGroup("Input")]
-#if ENABLE_INPUT_SYSTEM
-        public UnityEngine.InputSystem.InputActionReference _splitAction;
-#else
-        public KeyCode[] _splitKeyBindings;
-#endif
+        public InputActionReference _splitAction;
+        public InputActionReference _rotateAction;
 
-        [TitleGroup("Settings")] 
+        [TitleGroup("Settings")]
         public float DragPreviewIconSize = 200;
 
         [TitleGroup("Debug")]
         [ReadOnly] public bool IsSplitOperation;
+
         [ReadOnly] public bool InDragOperation;
         [ReadOnly] public IItemSource DragSource;
 
+        private bool _wasRotatedOriginally;
 
         public override void OnAwake()
         {
             base.OnAwake();
             _splitAction.ToInputAction().Enable();
+            _rotateAction.ToInputAction().Disable();
+            _rotateAction.ToInputAction().performed += RotateDraggedItem;
+        }
+
+        private void RotateDraggedItem(InputAction.CallbackContext obj)
+        {
+            if (!InDragOperation)
+                return;
+
+            ItemBase item = DragSource.GetItem();
+            if (item.CanRotate)
+                item.Rotated = !item.Rotated;
         }
 
         private void CreateDragIconCopy(IItemSource display)
         {
             _draggedIcon = Instantiate(display.VisualSource, _dragDropRoot.GetComponent<RectTransform>());
+            _draggedIcon.name = "Dragged Visual Copy";
             RectTransform rt = _draggedIcon.GetComponent<RectTransform>().SetAnchor(AnchorPresets.TopLeft);
             Vector2 originalSize = display.VisualSource.GetComponent<RectTransform>().rect.size;
 
@@ -68,6 +81,9 @@ namespace Ludole.Inventory
 
         public void RegisterDragOperation(IItemSource display)
         {
+            if (InDragOperation)
+                RestoreDragOperation(false);
+
             display.ToggleRaycastTarget(false);
             DragSource = display;
             CreateDragDropRoot();
@@ -75,32 +91,38 @@ namespace Ludole.Inventory
             IsSplitOperation = DetectSplitOperation();
             Manager.Use<WindowManager>().Continuously = true;
             InDragOperation = true;
+            _wasRotatedOriginally = display.GetItem().Rotated;
+            _rotateAction.ToInputAction().Enable();
             // TODO: Events
         }
 
         public void UpdateDragOperation()
         {
-            _draggedIcon.transform.position = InputHelper.MousePosition;
+            if (_draggedIcon != null)
+                _draggedIcon.transform.position = InputHelper.MousePosition;
         }
 
         private bool DetectSplitOperation()
         {
-#if ENABLE_INPUT_SYSTEM
-            UnityEngine.InputSystem.InputAction inputAction = _splitAction.ToInputAction();
+            InputAction inputAction = _splitAction.ToInputAction();
             return inputAction.IsPressed();
-#else
-            return _splitKeyBindings.Any(b => Input.GetKey(b));
-#endif
         }
 
-        public void RestoreDragOperation()
+        public void RestoreDragOperation(bool operationSuccessful)
         {
             DragSource.ToggleRaycastTarget(true);
+            if (!operationSuccessful)
+            {
+                DragSource.GetItem().Rotated = _wasRotatedOriginally;
+            }
+            
             Destroy(_draggedIcon);
             Destroy(_dragDropRoot);
             DragSource.Enable();
+            
             Manager.Use<WindowManager>().Continuously = false;
             InDragOperation = false;
+            _rotateAction.ToInputAction().Disable();
             // TODO: Events
         }
     }

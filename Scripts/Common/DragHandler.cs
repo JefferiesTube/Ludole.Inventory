@@ -29,7 +29,7 @@ namespace Ludole.Inventory
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            Manager.Use<DragDropManager>().RestoreDragOperation();
+            Manager.Use<DragDropManager>().RestoreDragOperation(false);
         }
     }
 }

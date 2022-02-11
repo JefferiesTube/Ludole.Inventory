@@ -10,6 +10,7 @@ namespace Ludole.Inventory
         public Image Background;
         public Image Image;
         public Image Selection;
+        public UIVertexRotation VertexRotator;
 
         [SerializeField] private UnityEvent _onSelect;
         public UnityEvent OnSelect => _onSelect;

@@ -81,6 +81,8 @@ namespace Ludole.Inventory
                 jsd.JigsawInventory = _inventory;
                 jsd.Position = new Vector2Int(item.X, item.Y);
                 rt.SetParent(_grid.transform);
+                //jsd.VertexRotator.transform.localRotation = Quaternion.Euler(0, 0, item.Content.Rotated ? -90 : 0);
+                jsd.VertexRotator.Rotation = item.Content.Rotated ? VertexRotation.Quarter : VertexRotation.None;
 
                 rt.anchoredPosition = new Vector2(
                        item.X * _grid.cellSize.x + Mathf.Min(0, item.X - 1) * _grid.spacing.x,

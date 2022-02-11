@@ -24,6 +24,7 @@ namespace Ludole.Inventory
 
         public void OnDrop(PointerEventData eventData)
         {
+            bool operationSuccessful = false;
             try
             {
                 _sourceChanged = false;
@@ -33,7 +34,11 @@ namespace Ludole.Inventory
                 _isSplitOperation = Manager.Use<DragDropManager>().IsSplitOperation;
 
                 if (OperateOnSameSlot())
+                {
+                    _sourceChanged = true;
+                    operationSuccessful = true;
                     return;
+                }
 
                 if (TargetSlotIsFree())
                 {
@@ -47,6 +52,8 @@ namespace Ludole.Inventory
                         return;
                     SwapItems();
                 }
+
+                operationSuccessful = true;
             }
             finally
             {
@@ -54,7 +61,7 @@ namespace Ludole.Inventory
                     Source.Inventory.Changed();
                 if (_targetChanged)
                     Target.Inventory.Changed();
-                Manager.Use<DragDropManager>().RestoreDragOperation();
+                Manager.Use<DragDropManager>().RestoreDragOperation(operationSuccessful);
             }
         }
 
@@ -83,7 +90,9 @@ namespace Ludole.Inventory
 
         private void CreateItemAtTarget()
         {
-            Target.Inventory.Place(Target.Index, Instantiate(Source.GetItem()));
+            ItemBase newInstance = Instantiate(Source.GetItem());
+            newInstance.name = Source.GetItem().name;
+            Target.Inventory.Place(Target.Index, newInstance);
             // TODO: Stacking
             // TODO: TrashSlot
             _targetChanged = true;
