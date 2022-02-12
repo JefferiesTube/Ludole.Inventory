@@ -1,3 +1,4 @@
+using System;
 using MarkupAttributes;
 using UnityEngine;
 using UnityEngine.Events;
@@ -5,6 +6,8 @@ using UnityEngine.UI;
 
 namespace Ludole.Inventory
 {
+    [Serializable] public class VisualEvent : UnityEvent<ItemBase> {}
+
     public class JigsawSlotDisplay : MonoBehaviour, IItemSource
     {
         public Image Background;
@@ -25,6 +28,8 @@ namespace Ludole.Inventory
         public Transform GetDragDropRootTransform => transform.root.GetComponentInChildren<Canvas>().transform;
 
         public RectTransform VisualTransform => GetComponent<RectTransform>();
+
+        public VisualEvent CustomVisualSetup;
 
         public void Enable()
         {

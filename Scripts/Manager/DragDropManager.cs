@@ -110,15 +110,19 @@ namespace Ludole.Inventory
 
         public void RestoreDragOperation(bool operationSuccessful)
         {
-            DragSource.ToggleRaycastTarget(true);
-            if (!operationSuccessful)
+            if (DragSource != null)
             {
-                DragSource.GetItem().Rotated = _wasRotatedOriginally;
+                DragSource.ToggleRaycastTarget(true);
+                if (!operationSuccessful && DragSource.GetItem() != null)
+                {
+                    DragSource.GetItem().Rotated = _wasRotatedOriginally;
+                }
+
+                DragSource.Enable();
             }
-            
+
             Destroy(_draggedIcon);
             Destroy(_dragDropRoot);
-            DragSource.Enable();
             
             Manager.Use<WindowManager>().Continuously = false;
             InDragOperation = false;

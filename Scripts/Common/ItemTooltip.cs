@@ -27,6 +27,9 @@ namespace Ludole.Inventory
                     MoveTooltipToSlot();
                     break;
 
+                case TooltipMode.Fixed:
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -39,6 +42,7 @@ namespace Ludole.Inventory
             graph.Item = GetComponentInParent<IItemSource>().GetItem();
             LudoleGraphProcessor processor = new LudoleGraphProcessor(graph);
             processor.Run();
+            Manager.Use<TooltipManager>().OnOpenTooltip.Invoke(graph.Item);
         }
 
         private void MoveTooltipToSlot()
@@ -67,6 +71,8 @@ namespace Ludole.Inventory
         {
             Manager.Use<TooltipManager>().Tooltip.SetActive(false);
             StopCoroutine(MoveTooltip());
+            Manager.Use<TooltipManager>().OnCloseTooltip.Invoke();
+
         }
     }
 }

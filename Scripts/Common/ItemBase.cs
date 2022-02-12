@@ -12,6 +12,7 @@ namespace Ludole.Inventory
         public List<Category> Categories;
         public Sprite Visual;
         public GameObject Prefab;
+        public Vector3 VisualRotation;
         public Rarity Rarity;
         [Multiline] public string Description;
 

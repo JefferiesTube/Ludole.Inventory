@@ -24,10 +24,13 @@ namespace Ludole.Inventory
         [AssetsOnly, ShowIf(nameof(UseCustomSlotPrefab), true)]
         public GameObject CustomSlotPrefab;
 
+        public bool Initialized { get; private set; }
+
         protected virtual void Awake()
         {
             _spawnedObjects = new Dictionary<int, TDisplay>();
             _selection = new List<int>();
+            Initialized = true;
         }
 
         public TInventory Inventory

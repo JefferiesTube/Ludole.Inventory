@@ -25,6 +25,11 @@ namespace Ludole.Inventory
     }
 
     [Serializable]
+    public class ItemEvent : UnityEvent<ItemBase>
+    {
+    }
+
+    [Serializable]
     public class InventorySelectionEvent : UnityEvent<IList<int>>
     {
     }

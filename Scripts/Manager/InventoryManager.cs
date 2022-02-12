@@ -17,7 +17,21 @@ namespace Ludole.Inventory
 
         [TitleGroup("Prefabs")]
         public GameObject GridSlotPrefab;
+
         public GameObject JigsawSlotPrefab;
         public GameObject JigsawVisualPrefab;
+        public JigsawGridDisplay CurrentInventoryDisplay;
+
+        public void SetCurrentInventory(JigsawInventory inventory)
+        {
+            if (CurrentInventoryDisplay.Initialized)
+            {
+                CurrentInventoryDisplay.Inventory = inventory;
+            }
+            else
+            {
+                Manager.Use<Executor>().ExecOnEndOfFrame(() => CurrentInventoryDisplay.Inventory = inventory);
+            }
+        }
     }
 }

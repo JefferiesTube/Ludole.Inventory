@@ -1,9 +1,10 @@
 using Ludole.Core;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Ludole.Inventory
 {
-    public enum TooltipMode { FollowMouse, RelativeToSlot }
+    public enum TooltipMode { FollowMouse, RelativeToSlot, Fixed }
 
     public class TooltipManager : ManagerModule
     {
@@ -19,6 +20,9 @@ namespace Ludole.Inventory
         [SerializeField] public GameObject BasicTextPrefab;
         public GameObject HorizontalGroupPrefab;
         public GameObject VerticalGroupPrefab;
+
+        public ItemEvent OnOpenTooltip;
+        public UnityEvent OnCloseTooltip;
 
         public override void OnAwake()
         {

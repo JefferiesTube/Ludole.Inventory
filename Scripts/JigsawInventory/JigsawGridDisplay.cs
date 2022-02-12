@@ -1,4 +1,5 @@
 using Ludole.Core;
+using MarkupAttributes;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -11,6 +12,9 @@ namespace Ludole.Inventory
         private List<GameObject> _spawnedVisuals;
 
         private GridLayoutGroup _grid;
+
+        [Foldout("Overrides")]
+        public bool NoSpriteAssignment;
 
         protected override void Awake()
         {
@@ -52,9 +56,6 @@ namespace Ludole.Inventory
                     GameObject slot = Instantiate(slotPrefab, transform);
                     slot.name = $"{position.x:D2}:{position.y:D2}";
                     JigsawSlotDisplay refs = slot.GetComponent<JigsawSlotDisplay>();
-                    //if (refs == null)
-                    //    throw new MissingComponentException(
-                    //        $"[Inventory] SlotPrefabs require a \'{nameof(ItemSlotDisplay)}\' component");
 
                     _spawnedObjects.Add(i, refs);
                 }
@@ -80,19 +81,23 @@ namespace Ludole.Inventory
                 JigsawSlotDisplay jsd = visual.GetComponent<JigsawSlotDisplay>();
                 jsd.JigsawInventory = _inventory;
                 jsd.Position = new Vector2Int(item.X, item.Y);
-                rt.SetParent(_grid.transform);
-                //jsd.VertexRotator.transform.localRotation = Quaternion.Euler(0, 0, item.Content.Rotated ? -90 : 0);
+                rt.SetParent(_grid.transform, true);
                 jsd.VertexRotator.Rotation = item.Content.Rotated ? VertexRotation.Quarter : VertexRotation.None;
 
-                rt.anchoredPosition = new Vector2(
+                rt.anchoredPosition3D = new Vector3(
                        item.X * _grid.cellSize.x + Mathf.Min(0, item.X - 1) * _grid.spacing.x,
-                    -(item.Y * _grid.cellSize.y + Mathf.Min(0, item.Y - 1) * _grid.spacing.y));
+                    -(item.Y * _grid.cellSize.y + Mathf.Min(0, item.Y - 1) * _grid.spacing.y), 0);
 
                 rt.sizeDelta = new Vector2(
                     item.Content.Width * _grid.cellSize.x + Mathf.Min(0, item.Content.Width - 1) * _grid.spacing.x,
                     item.Content.Height * _grid.cellSize.y + Mathf.Min(0, item.Content.Height - 1) * _grid.spacing.y);
-                jsd.Image.sprite = item.Content.Visual;
+                if (jsd.Image != null && !NoSpriteAssignment)
+                    jsd.Image.sprite = item.Content.Visual;
+
+                visual.transform.localScale = Vector3.one;
+                rt.name = item.Content.Name;
                 _spawnedVisuals.Add(visual);
+                jsd.CustomVisualSetup.Invoke(item.Content);
             }
         }
 
