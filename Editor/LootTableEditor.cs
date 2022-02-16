@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEditor;
-using UnityEditorInternal;
 using UnityEngine;
 
 namespace Ludole.Inventory.Editor
@@ -9,91 +8,73 @@ namespace Ludole.Inventory.Editor
     [CustomEditor(typeof(LootTable))]
     public class LootTableEditor : UnityEditor.Editor
     {
+        private static GUIStyle _linkStyle;
+
         private LootTable _lootTable => (LootTable)target;
         private LootDataset _current;
 
-        private Stack<LootDataset> _navigationStack;
-
-        private ReorderableList _list;
+        private List<LootDataset> _navigationStack;
 
         private void OnEnable()
         {
-            _navigationStack = new Stack<LootDataset>();
+            _navigationStack = new List<LootDataset>();
         }
 
         public override void OnInspectorGUI()
         {
+            _linkStyle = GUI.skin.label;
+            _linkStyle.richText = true;
+            _linkStyle.hover.textColor = Color.blue;
+
             if (_lootTable.Empty)
             {
                 LootGroup newGroup = new LootGroup("New Loot Group");
                 _lootTable.Root = newGroup;
                 _current = newGroup;
-                UpdateList();
             }
             else if (_current == null)
             {
                 _current = _lootTable.Root;
             }
 
-            if (_list == null)
-                UpdateList();
-
+            DrawNavigation();
             DrawCurrent();
+        }
 
-            if (_current is LootGroup group)
+        private void DrawNavigation()
+        {
+            int indentLevel = EditorGUI.indentLevel;
+            for (int i = 0; i < _navigationStack.Count; i++)
             {
-                AddGroupButton(group);
-                AddLinkButton(group);
-                AddItemButton(group);
+                EditorGUI.indentLevel++;
+                if (GUILayout.Button(
+                        $"{(i > 0 ? "..." : "")}{_navigationStack[i].Name} [{GetShortTypeName(_navigationStack[i])} -> {_navigationStack[i].Name}]",
+                        _linkStyle))
+                {
+                    _current = _navigationStack[i];
+                    _navigationStack.RemoveRange(i, _navigationStack.Count - i);
+                    return;
+                }
             }
+
+            EditorGUI.indentLevel = indentLevel;
         }
 
-        private void UpdateList()
+        private string GetShortTypeName(LootDataset dataset)
         {
-            _list = new ReorderableList((_current as LootGroup).SubItems, typeof(LootDataset), true, true, false, false);
-            _list.drawElementCallback += CustomDrawHandler;
-            _list.elementHeightCallback += CustomElementHeight;
-        }
-
-        private float CustomElementHeight(int index)
-        {
-            switch ((_current as LootGroup).SubItems[index])
-            {
-                case LootGroup:
-                    return 200;
-
-                case LootItem lootItem:
-                    return 100;
-
-                case LootLink lootLink:
-                    return 100;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private void CustomDrawHandler(Rect rect, int index, bool isactive, bool isfocused)
-        {
-            switch ((_current as LootGroup).SubItems[index])
+            switch (dataset)
             {
                 case LootGroup lootGroup:
-                    EditorGUILayout.LabelField("Group");
-                    EditorGUILayout.LabelField("Group");
-                    EditorGUILayout.LabelField("Group");
-
-                    break;
+                    return "Group";
 
                 case LootItem lootItem:
-                    EditorGUI.LabelField(rect, "Item");
-                    break;
+                    return "Item";
 
                 case LootLink lootLink:
-                    EditorGUI.LabelField(rect, "Link");
-                    break;
+                    return "Link";
 
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException(nameof(dataset));
             }
         }
 
@@ -126,7 +107,80 @@ namespace Ludole.Inventory.Editor
 
         private void DrawCurrent()
         {
-            _list.DoLayoutList();
+            switch (_current)
+            {
+                case LootGroup lootGroup:
+                    DrawGroup(lootGroup);
+                    break;
+
+                case LootItem lootItem:
+                    DrawItem(lootItem);
+                    break;
+
+                case LootLink lootLink:
+                    DrawLink(lootLink);
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(_current));
+            }
+        }
+
+        private void DrawGroup(LootGroup lootGroup)
+        {
+            lootGroup.GroupName = EditorGUILayout.TextField("Name", lootGroup.GroupName);
+            lootGroup.Chance = EditorGUILayout.Slider("Chance", lootGroup.Chance, 0, 1);
+            lootGroup.Mode = (GroupMode) EditorGUILayout.EnumPopup("Mode", lootGroup.Mode);
+            lootGroup.Limit = Mathf.Max(1,  EditorGUILayout.IntField("Limit", lootGroup.Limit));
+
+            EditorGUILayout.BeginVertical("Box");
+            {
+                EditorGUILayout.LabelField("Contents");
+                for (int i = 0; i < lootGroup.SubItems.Count; i++)
+                {
+                    LootDataset item = lootGroup.SubItems[i];
+                    EditorGUILayout.BeginHorizontal();
+                    {
+                        EditorGUILayout.LabelField(item.Name);
+                        if(GUILayout.Button("X"))
+                        {
+                            lootGroup.SubItems.RemoveAt(i);
+                            i--;
+                            continue;
+                        }
+
+                        if (GUILayout.Button("Edit"))
+                        {
+                            _navigationStack.Add(_current);
+                            _current = item;
+                            return;
+                        }
+                    }
+                    EditorGUILayout.EndHorizontal();
+                }
+            }
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.BeginHorizontal();
+            {
+                AddGroupButton(lootGroup);
+                AddLinkButton(lootGroup);
+                AddItemButton(lootGroup);
+            }
+            EditorGUILayout.EndHorizontal();
+        }
+
+        private void DrawItem(LootItem lootItem)
+        {
+            lootItem.Chance = EditorGUILayout.Slider("Chance", lootItem.Chance, 0, 1);
+            lootItem.ItemTemplate = (ItemBase) EditorGUILayout.ObjectField(lootItem.ItemTemplate, typeof(ItemBase), false);
+            lootItem.Amount = Mathf.Max(1, EditorGUILayout.IntField("Amount", lootItem.Amount));
+        }
+
+        private void DrawLink(LootLink lootLink)
+        {
+            lootLink.Chance = EditorGUILayout.Slider("Chance", lootLink.Chance, 0, 1);
+            lootLink.LootTable = (LootTable) EditorGUILayout.ObjectField(lootLink.LootTable, typeof(LootTable), false);
         }
     }
 }

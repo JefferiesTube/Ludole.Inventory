@@ -13,7 +13,8 @@ namespace Ludole.Inventory
         public GroupMode Mode;
         [SerializeReference] public List<LootDataset> SubItems;
         public int Limit;
-        public string Name;
+        public string GroupName;
+        public override string Name => GroupName;
 
         public LootGroup() : this("")
         {
@@ -21,7 +22,7 @@ namespace Ludole.Inventory
 
         public LootGroup(string name)
         {
-            Name = name;
+            GroupName = name;
             SubItems = new List<LootDataset>();
         }
 

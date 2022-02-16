@@ -6,6 +6,8 @@ namespace Ludole.Inventory
     {
         public LootTable LootTable;
 
+        public override string Name => LootTable != null ? LootTable.name : "No Link";
+
         public override void AssignLoot(List<LootEntry> loot)
         {
             loot.AddRange(LootTable.GetLoot());

@@ -6,6 +6,7 @@ namespace Ludole.Inventory
     {
         public ItemBase ItemTemplate;
         public int Amount;
+        public override string Name => ItemTemplate != null ? ItemTemplate.Name : "No Item";
 
         public override void AssignLoot(List<LootEntry> loot)
         {
