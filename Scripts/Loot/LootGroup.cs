@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using Random = System.Random;
 
 namespace Ludole.Inventory
 {
@@ -9,7 +11,7 @@ namespace Ludole.Inventory
     public class LootGroup : LootDataset
     {
         public GroupMode Mode;
-        public List<LootDataset> SubItems;
+        [SerializeReference] public List<LootDataset> SubItems;
         public int Limit;
         public string Name;
 

@@ -5,12 +5,9 @@ using UnityEngine;
 namespace Ludole.Inventory
 {
     [Serializable]
-    public abstract class LootDataset : ScriptableObject
+    public abstract class LootDataset
     {
         public float Chance;
-
-        public LootDataset Parent;
-
         public abstract void AssignLoot(List<LootEntry> loot);
     }
 }

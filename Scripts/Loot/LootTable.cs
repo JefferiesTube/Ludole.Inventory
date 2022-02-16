@@ -7,7 +7,8 @@ namespace Ludole.Inventory
     [CreateAssetMenu(fileName = "New Loot Table.asset", menuName = "Inventory/Loot Table")]
     public class LootTable : ScriptableObject
     {
-        public LootDataset Root;
+        [SerializeReference] public LootDataset Root;
+        public bool Empty => Root == null;
 
         public List<LootEntry> GetLoot()
         {
