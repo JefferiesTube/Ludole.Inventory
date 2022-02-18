@@ -30,10 +30,25 @@ namespace Ludole.Inventory
 
         public ItemBase GetItem() => SlotInventory[SlotIndex];
 
+        private ItemBase _oldItem;
+
+        public ItemCooldownChangedEvent OnCooldownChanged;
+        public UnityEvent OnCooldownCleared;
+
         public void Refresh()
         {
             ItemSlot slot = SlotInventory.GetSlot(SlotIndex);
             bool hasItem = slot.Content != null;
+
+            if (_oldItem != null && _oldItem != slot.Content)
+            {
+                UnbindEvents(_oldItem);
+                BindEvents();
+            }
+            else if (_oldItem == null)
+            {
+                BindEvents();
+            }
 
             Icon.gameObject.SetActive(hasItem);
             Icon.sprite = hasItem ? slot.Content.Visual : null;
@@ -53,6 +68,32 @@ namespace Ludole.Inventory
         public void Disable()
         {
             OnDisable.Invoke(this);
+        }
+
+        private void InvokeCooldownChangeEvent()
+        {
+            OnCooldownChanged.Invoke(((IUsable)GetItem()).CooldownGroup);
+        }
+
+        public void BindEvents()
+        {
+            if (GetItem() is IUsable u && u.CooldownGroup != null)
+            {
+                u.CooldownGroup.OnCooldownChanged.AddListener(InvokeCooldownChangeEvent);
+                _oldItem = GetItem();
+            }
+        }
+
+        public void UnbindEvents(ItemBase target = null)
+        {
+            if (target == null)
+                target = GetItem();
+
+            if (target is IUsable u && u.CooldownGroup != null)
+            {
+                OnCooldownCleared.Invoke();
+                u.CooldownGroup.OnCooldownChanged.RemoveListener(InvokeCooldownChangeEvent);
+            }
         }
 
         public Transform GetDragDropRootTransform => transform.root.GetComponentInChildren<Canvas>().transform;

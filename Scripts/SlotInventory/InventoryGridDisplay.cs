@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Ludole.Core;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,7 +18,13 @@ namespace Ludole.Inventory
 
             bool doSpawn = _spawnedObjects.Count != _inventory.Size;
             if (doSpawn)
+            {
+                foreach (KeyValuePair<int, ItemSlotDisplay> slotDisplay in _spawnedObjects)
+                {
+                    slotDisplay.Value.UnbindEvents();
+                }
                 Clear();
+            }
 
             for (int i = 0; i < _inventory.Size; i++)
             {

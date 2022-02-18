@@ -89,7 +89,9 @@ namespace Ludole.Inventory
             CreateDragDropRoot();
             CreateDragIconCopy(display);
             IsSplitOperation = DetectSplitOperation();
-            Manager.Use<WindowManager>().Continuously = true;
+            if(Manager.Has<WindowManager>())
+                Manager.Use<WindowManager>().Continuously = true;
+
             InDragOperation = true;
             _wasRotatedOriginally = display.GetItem().Rotated;
             _rotateAction.ToInputAction().Enable();
@@ -124,7 +126,9 @@ namespace Ludole.Inventory
             Destroy(_draggedIcon);
             Destroy(_dragDropRoot);
             
-            Manager.Use<WindowManager>().Continuously = false;
+            if(Manager.Has<WindowManager>())
+                Manager.Use<WindowManager>().Continuously = false;
+
             InDragOperation = false;
             _rotateAction.ToInputAction().Disable();
             // TODO: Events

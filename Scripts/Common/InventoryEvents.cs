@@ -33,4 +33,9 @@ namespace Ludole.Inventory
     public class InventorySelectionEvent : UnityEvent<IList<int>>
     {
     }
+
+    [Serializable]
+    public class ItemCooldownChangedEvent : UnityEvent<CooldownGroup>
+    {
+    }
 }
