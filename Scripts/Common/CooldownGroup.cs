@@ -1,3 +1,4 @@
+using Ludole.Core;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,8 +11,8 @@ namespace Ludole.Inventory
 
         [Min(0)]public float Cooldown;
 
-        public float RemainingCooldown { get; set; }
-
         public UnityEvent OnCooldownChanged;
+        public bool HasCooldown => Manager.Use<CooldownManager>().RemainingCooldown(this) > 0;
+        public float RemainingCooldown => Manager.Use<CooldownManager>().RemainingCooldown(this);
     }
 }
