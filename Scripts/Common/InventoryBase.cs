@@ -1,6 +1,7 @@
 using MarkupAttributes;
 using System.Collections.Generic;
 using Ludole.Core;
+using Ludole.Unity;
 using UnityEngine;
 using UnityEngine.Events;
 

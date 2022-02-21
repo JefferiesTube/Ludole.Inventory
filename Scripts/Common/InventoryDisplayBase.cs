@@ -2,6 +2,7 @@ using Ludole.Core;
 using MarkupAttributes;
 using System.Collections.Generic;
 using System.Linq;
+using Ludole.Unity;
 using UnityEngine;
 
 namespace Ludole.Inventory
